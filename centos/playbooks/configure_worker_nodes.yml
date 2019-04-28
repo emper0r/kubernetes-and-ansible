@@ -4,8 +4,7 @@
   - env_variables
   tasks:
   - name: Copying token to worker nodes
-    copy: src={{ token_file }} dest=join_token
+    copy: src={{ token_file }} dest=$HOME/{{ token_file }}
 
-  - name: Joining worker nodes with kubernetes master
-    shell: "`grep -i 'kubeadm join' join_token`"
-
+#  - name: Joining worker nodes with kubernetes master
+#    shell: "`grep -i 'kubeadm join' -A1 $HOME/{{ token_file }}`"
