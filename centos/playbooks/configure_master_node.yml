@@ -6,12 +6,21 @@
   - name: Pulling images required for setting up a Kubernetes cluster
     shell: kubeadm config images pull
 
-  - name: Initializing Kubernetes cluster
-    shell: kubeadm init --apiserver-advertise-address {{ad_addr}} --pod-network-cidr={{cidr_v}}
-    register: output
+  - name: Creating files directory
+    file:
+      path: $HOME/kubernetes-and-ansible/centos/playbooks/files
+      state: directory
+      mode: 0755
 
-  - name: Storing Logs and Generated token for future purpose.
-    local_action: copy content={{ output.stdout }} dest={{ token_file }}
+  - name: Initializing Kubernetes cluster
+    shell: kubeadm init --apiserver-advertise-address {{ad_addr}} --pod-network-cidr={{cidr_v}} > $HOME/kubernetes-and-ansible/centos/playbook/files/{{token_file}}
+
+  - name: Updating kubernetes admin.conf certificates
+    file:
+      path: "{{ item }}"
+      state: absent
+    with_items:
+      - $HOME/.kube/
 
   - name: Copying required files
     shell: |
